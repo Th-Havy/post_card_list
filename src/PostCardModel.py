@@ -61,6 +61,22 @@ class PostCardListModel(QtCore.QAbstractListModel):
                 enumerate(PostCardModel.MODEL_FIELDS_BYTE_LITERALS,
                           start=Qt.UserRole)}
 
+    def removeRows(self, row, count, parent=QtCore.QModelIndex()):
+
+        if row < 0 or count < 0 or (row + count) > self.rowCount():
+            return False
+
+        self.beginRemoveRows(parent, row, row + count - 1)
+        del self.postCardList[row:(row + count)]
+        self.endRemoveRows()
+
+        return True
+
+    @QtCore.Slot(int)
+    def removePostCard(self, index):
+        """Remove a postcard from the list."""
+        self.removeRows(index, 1)
+
     # TODO change slot to provide correct API
     @QtCore.Slot(str)
     def appendPostCard(self, postCard):

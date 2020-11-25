@@ -8,6 +8,7 @@ from PySide2 import QtGui, QtQml, QtWidgets
 
 from PostCardModel import PostCardListModel
 from RecipientModel import RecipientListModel
+from Utils import Utils
 
 # Global variable for conveniences
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -17,6 +18,7 @@ def registerQmlCustomTypes():
     """Register the custom QML types for the app."""
     QtQml.qmlRegisterType(PostCardListModel, "PostCard",
                           1, 0, "PostCardListModel")
+    QtQml.qmlRegisterType(Utils, "PostCard", 1, 0, "Utils")
 
 
 def sendCards(checkStop, tray):
@@ -54,11 +56,12 @@ def sendCards(checkStop, tray):
 if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
-    engine = QtQml.QQmlApplicationEngine()
-    registerQmlCustomTypes()
-
     appIcon = QtGui.QIcon(os.path.join(PROJECT_ROOT, "resources/app_icon.png"))
     app.setWindowIcon(appIcon)
+    app.setOrganizationName("Th-Havy")
+    app.setOrganizationDomain("blablabla.com")
+    engine = QtQml.QQmlApplicationEngine()
+    registerQmlCustomTypes()
 
     # Tray menu
     menu = QtWidgets.QMenu()

@@ -5,4 +5,5 @@
 
 * postcardModel
   * Implement function to edit it
-  * Create a list in python by looking in the data folder
+
+* Send cards periodically

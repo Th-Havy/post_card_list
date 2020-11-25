@@ -13,6 +13,10 @@ Window {
     visible: true
     title: qsTr("PostCardList")
 
+    Utils {
+        id: utils
+    }
+
     FileDialog {
         id: imagePicker
         visible: false
@@ -34,7 +38,9 @@ Window {
         model: postCardModel
         anchors.fill: parent
         spacing: 10
-        delegate: PostCard {}
+        delegate: PostCard {
+            model: postCardModel
+        }
     }
 
     RoundButton {
@@ -54,16 +60,20 @@ Window {
         id: dropImageArea;
         anchors.fill: parent
         onEntered: {
-            dropAreaHint.state = "VALID_DRAG"
-            console.log("format")
-            console.log(drag.formats)
+            var validImage = false
+
+            // Check if a valid image is among the dragged data
             for (var image of drag.urls) {
-                //postCardModel.appendPostCard(image)
+                validImage = validImage || utils.isValidDroppedImage(image)
             }
+
+            dropAreaHint.state = validImage ? "VALID_DRAG" : "INVALID_DRAG"
         }
         onDropped: {
             for (var image of drop.urls) {
-                postCardModel.appendPostCard(image)
+                if (utils.isValidDroppedImage(image)) {
+                    postCardModel.appendPostCard(image)
+                }
             }
 
             dropAreaHint.state = ""
@@ -101,7 +111,7 @@ Window {
                     name: "INVALID_DRAG"
                     PropertyChanges { target: dropAreaHint; visible: true}
                     PropertyChanges { target: dropAreaHintText; text: qsTr("Invalid content")}
-                    PropertyChanges { target: dropAreaHintRectangle; color: "red"}
+                    PropertyChanges { target: dropAreaHintRectangle; color: "#ffa4a4"}
                 }
             ]
         }
