@@ -1,3 +1,3 @@
 {
-    "files": ["src/PostCardModel.py","TODO.md","ui/main.qml","ui/PostCard.qml","resources/app_icon.png","src/main.py","src/RecipientModel.py","README.md","resources/recipient_icon.png","src/Utils.py"]
+    "files": ["resources/app_icon.png","README.md","resources/recipient_icon.png","src/Utils.py","TODO.md","ui/PostCard.qml","ui/main.qml","ui/MainView.qml","src/PostCardModel.py","src/RecipientModel.py","ui/ImagePicker.qml","src/main.py","ui/DropImageArea.qml"]
 }
