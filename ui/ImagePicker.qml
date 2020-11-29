@@ -9,9 +9,4 @@ FileDialog {
     selectExisting: true
     selectFolder: false
     selectMultiple: true
-    onAccepted: {
-        for (var image of imagePicker.fileUrls) {
-            postCardModel.appendPostCard(image)
-        }
-    }
 }

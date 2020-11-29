@@ -6,22 +6,31 @@ from threading import Thread
 
 from PySide2 import QtGui, QtQml, QtWidgets
 
-from PostCardModel import PostCardListModel
+from PostCardModel import PostCardListModel, PostCardModel
 from RecipientModel import RecipientListModel
 from Utils import Utils
+from CredentialManager import CredentialManager
 
 # Global variable for conveniences
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 
 
 def registerQmlCustomTypes():
-    """Register the custom QML types for the app."""
+    """Register the custom QML types for the app.
+
+    Unfortunately qmlRegisterUncreatableType is not yet supported in
+    PySide2, so we register all the types even though we do not want
+    to instantiate PostCardModel for instance.
+    """
+
     QtQml.qmlRegisterType(PostCardListModel, "PostCard",
                           1, 0, "PostCardListModel")
     QtQml.qmlRegisterType(Utils, "PostCard", 1, 0, "Utils")
+    QtQml.qmlRegisterType(CredentialManager, "PostCard",
+                          1, 0, "CredentialManager")
 
 
-def sendCards(checkStop, tray):
+def sendCards(checkStop, tray, postCardListModel):
     """Send periodically a card.
 
     Keyword arguments:
@@ -30,7 +39,7 @@ def sendCards(checkStop, tray):
     """
 
     lastSendingTime = time.time()
-    waitingInterval = 1.0
+    waitingInterval = 5.0
 
     while True:
         if checkStop():
@@ -45,6 +54,9 @@ def sendCards(checkStop, tray):
 
         # TODO: send card
 
+        # Remove top-most card from list
+        postCardListModel.requestRemovePostCard.emit(0)
+
         notifTitle = "PostCardList"
         notifMessage = app.tr("A new postcard was sent.")
         tray.showMessage(notifTitle , notifMessage, msecs=1000)
@@ -55,6 +67,7 @@ def sendCards(checkStop, tray):
 
 if __name__ == "__main__":
 
+    # Create qml application
     app = QtWidgets.QApplication(sys.argv)
     appIcon = QtGui.QIcon(os.path.join(PROJECT_ROOT, "resources/app_icon.png"))
     app.setWindowIcon(appIcon)
@@ -75,23 +88,28 @@ if __name__ == "__main__":
     tray.setToolTip(app.tr("PostCardList is running in the background."))
     tray.show()
 
-    stopAllThreads = False
-
-    cardSendingThread = Thread(target=sendCards,
-                               args=[lambda : stopAllThreads, tray])
-    cardSendingThread.start()
-
-    # TODO remove these lines
-    model = PostCardListModel.fromFile(
+    # Create/load database
+    postCardListModel = PostCardListModel.fromFile(
                 os.path.join(PROJECT_ROOT, "data/cards.csv"))
-    #model.toCsvFile("../data/cards2.csv")
+    # TODO remove these lines
+    #postCardListModel.toCsvFile("../data/cards2.csv")
     recipientModel = RecipientListModel.fromFile(
                         os.path.join(PROJECT_ROOT, "data/recipients.csv"))
     #recipientModel.toCsvFile("../data/recipients2.csv")
 
-    # Set listviews data
-    engine.rootContext().setContextProperty("postCardModel", model)
+    # TODO: handle credentials
+    credentialManager = CredentialManager()
+
+    # Set listviews data and load UI
+    engine.rootContext().setContextProperty("postCardModel", postCardListModel)
+    engine.rootContext().setContextProperty("credentialManager", credentialManager)
     engine.load(os.path.join(PROJECT_ROOT, "ui/main.qml"))
+
+    # Start threads
+    stopAllThreads = False
+    cardSendingThread = Thread(target=sendCards, args=[
+        lambda : stopAllThreads, tray, postCardListModel])
+    cardSendingThread.start()
 
     # Run Qt App
     if not engine.rootObjects():

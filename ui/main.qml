@@ -19,38 +19,41 @@ ApplicationWindow {
 
     header: ToolBar {
         id: toolBar
+        contentHeight: toolButton.implicitHeight
 
-        position: ToolBar.Header
+        ToolButton {
+            id: toolButton
+            text: stackView.depth > 1 ? "\u25C0" : "\u2630"
+            font.pixelSize: Qt.application.font.pixelSize * 1.6
+            onClicked: {
+                if (stackView.depth > 1) {
+                    stackView.pop()
+                }
+                else {
+                    stackView.push(Qt.createComponent("LoginView.qml"), {
+                        stackView: stackView,
+                        credentialManager: credentialManager
+                    })
+                }
+            }
+        }
 
-        RowLayout {
-            anchors.fill: parent
-            ToolButton {
-                text: qsTr("‹")
-                //onClicked: stack.pop()
-            }
-            Label {
-                text: mainWindow.title
-                elide: Label.ElideRight
-                horizontalAlignment: Qt.AlignHCenter
-                verticalAlignment: Qt.AlignVCenter
-                Layout.fillWidth: true
-            }
-            ToolButton {
-                text: qsTr("⋮")
-                //onClicked: menu.open()
-            }
+        Label {
+            text: stackView.currentItem.title
+            anchors.centerIn: parent
         }
     }
 
-    MainView {
-        utils: utils
-    }
-
-    /*StackView {
-        id: stack
-        initialItem: mainView
+    StackView {
+        id: stackView
         anchors.fill: parent
-    }*/
+        initialItem: MainView {
+            id: mainView
+            title: mainWindow.title
+            utils: utils
+            stackView: stackView
+        }
+    }
 
 
 }

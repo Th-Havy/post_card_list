@@ -7,10 +7,11 @@ import QtQuick.Dialogs 1.0
 import PostCard 1.0
 
 Item {
+    id: mainView
 
     property Utils utils: Utils {}
-
-    anchors.fill: parent
+    property string title: ""
+    property StackView stackView
 
     ListView {
         id: postCardListView
@@ -20,6 +21,7 @@ Item {
         anchors.topMargin: spacing
         delegate: PostCard {
             model: postCardModel
+            stackView: mainView.stackView
         }
     }
 
@@ -43,5 +45,10 @@ Item {
 
     ImagePicker {
         id: imagePicker
+        onAccepted: {
+            for (var image of imagePicker.fileUrls) {
+                postCardModel.appendPostCard(image)
+            }
+        }
     }
 }

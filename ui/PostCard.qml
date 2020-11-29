@@ -8,17 +8,24 @@ Item {
     id: container
 
     property PostCardListModel model
+    property StackView stackView
 
     width: ListView.view.width
     height: 120
 
-    Rectangle {
+    Button {
         id: backgroundRect
         anchors.fill: parent
         anchors.leftMargin: 10
         anchors.rightMargin: 10
-        color: "#ecf5b0"
-        radius: 20
+
+        onClicked: stackView.push(Qt.createComponent("EditCardView.qml"), {
+            model: model,
+            index: index,
+            photo: photo,
+            backText: backText,
+            recipient: recipient
+        })
 
         RowLayout {
             anchors.fill: parent
@@ -29,6 +36,8 @@ Item {
                 Layout.preferredWidth: container.height
                 Layout.margins: 10
                 source: photo
+                sourceSize.width: 512
+                sourceSize.height: 512
             }
 
             Text {
