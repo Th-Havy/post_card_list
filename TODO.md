@@ -14,3 +14,6 @@
     * Login page
     * Recipient list
     * Cards sent
+
+* UI
+    * Put trash bin icon instead of 'x' to delete

@@ -13,14 +13,14 @@ Rectangle {
     property int index
     property string photo: ""
     property string backText: ""
-    property string recipient: ""
+    property int recipientId: 0
 
     property var __qModelIndex: model.index(index, 0)
 
     Component.onDestruction: {
         model.setData(__qModelIndex, photo, model.photoRole())
         model.setData(__qModelIndex, backText, model.backTextRole())
-        model.setData(__qModelIndex, recipient, model.recipientRole())
+        model.setData(__qModelIndex, recipientId, model.recipientIdRole())
     }
 
     ColumnLayout {
@@ -105,7 +105,7 @@ Rectangle {
             currentIndex: 0
             model: recipientListModel
             textRole: "displayName"
-            onActivated: recipient = currentText
+            onActivated: recipientId = currentIndex
         }
     }
 

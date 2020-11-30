@@ -8,28 +8,28 @@ import pandas as pd
 class PostCardModel():
     """Class representing a postcard."""
 
-    def __init__(self, photo="", backText="", recipient=""):
+    def __init__(self, photo="", backText="", recipientId=0):
         self.photo = photo
         self.backText = backText
-        self.recipient = recipient
+        self.recipientId = recipientId
 
     def toList(self):
-        return [self.photo, self.backText, self.recipient]
+        return [self.photo, self.backText, self.recipientId]
 
 
 class PostCardListModel(QtCore.QAbstractListModel):
     """Class representing a list of postcards."""
 
-    MODEL_FIELDS = ["photo", "backText", "recipient"]
+    MODEL_FIELDS = ["photo", "backText", "recipientId"]
 
     PHOTO_ROLE = Qt.UserRole + 1
     BACK_TEXT_ROLE = Qt.UserRole + 2
-    RECIPIENT_ROLE = Qt.UserRole + 3
+    RECIPIENT_ID_ROLE = Qt.UserRole + 3
 
     ROLE_NAMES = {
         PHOTO_ROLE: b"photo",
         BACK_TEXT_ROLE: b"backText",
-        RECIPIENT_ROLE: b"recipient"
+        RECIPIENT_ID_ROLE: b"recipientId"
     }
 
     # Modification of the list can only be done in the GUI thread,
@@ -65,8 +65,8 @@ class PostCardListModel(QtCore.QAbstractListModel):
                 return element.photo
             elif role == self.BACK_TEXT_ROLE:
                 return element.backText
-            elif role == self.RECIPIENT_ROLE:
-                return element.recipient
+            elif role == self.RECIPIENT_ID_ROLE:
+                return element.recipientId
         else:
             return None
 
@@ -83,8 +83,8 @@ class PostCardListModel(QtCore.QAbstractListModel):
                 element.photo = value
             elif role == self.BACK_TEXT_ROLE:
                 element.backText = value
-            elif role == self.RECIPIENT_ROLE:
-                element.recipient = value
+            elif role == self.RECIPIENT_ID_ROLE:
+                element.recipientId = value
 
             self.postCardList[index.row()] = element
             self.dataChanged.emit(index, index, [role])
@@ -108,9 +108,9 @@ class PostCardListModel(QtCore.QAbstractListModel):
         return self.BACK_TEXT_ROLE
 
     @QtCore.Slot(result=int)
-    def recipientRole(self):
-        """Return the recipient role."""
-        return self.RECIPIENT_ROLE
+    def recipientIdRole(self):
+        """Return the recipient id role."""
+        return self.RECIPIENT_ID_ROLE
 
     def removeRows(self, row, count, parent=QtCore.QModelIndex()):
         """Remove rows from the list."""
@@ -129,16 +129,15 @@ class PostCardListModel(QtCore.QAbstractListModel):
         """Remove a postcard from the list."""
         self.removeRows(index, 1)
 
-    # TODO change slot to provide correct API
-    @QtCore.Slot(str)
-    def appendPostCard(self, postCard):
+    @QtCore.Slot(str, str, int)
+    def appendPostCard(self, photo, backText, recipientId):
         """Append a postcard to the list."""
         self.beginInsertRows(QtCore.QModelIndex(),
                              self.rowCount(),
                              self.rowCount())
 
-        testCard = PostCardModel(postCard, "test", "Titi")
-        self.postCardList.append(testCard)
+        card = PostCardModel(photo, backText, recipientId)
+        self.postCardList.append(card)
         self.endInsertRows()
 
     def toCsvFile(self, filepath):

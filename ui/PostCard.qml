@@ -26,7 +26,7 @@ Item {
             index: index,
             photo: photo,
             backText: backText,
-            recipient: recipient
+            recipientId: recipientId
         })
 
         RowLayout {
@@ -47,7 +47,12 @@ Item {
             }
 
             Text {
-                text: '<b>Recipient:</b> ' + recipient
+                text: {
+                    var qModelIndex = recipientListModel.index(recipientId, 0)
+                    var recipientName = recipientListModel.data(qModelIndex,
+                                                                recipientListModel.displayNameRole())
+                    return '<b>Recipient:</b> ' + recipientName
+                }
             }
         }
 

@@ -21,7 +21,7 @@ DropArea {
     onDropped: {
         for (var image of drop.urls) {
             if (utils.isValidDroppedImage(image)) {
-                postCardModel.appendPostCard(image)
+                postCardModel.appendPostCard(image, "", 0)
             }
         }
         

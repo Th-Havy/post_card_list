@@ -48,7 +48,7 @@ Item {
         id: imagePicker
         onAccepted: {
             for (var image of imagePicker.fileUrls) {
-                postCardModel.appendPostCard(image)
+                postCardModel.appendPostCard(image, "", 0)
             }
         }
     }
