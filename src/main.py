@@ -6,7 +6,7 @@ from threading import Thread
 
 from PySide2 import QtGui, QtQml, QtWidgets
 
-from PostCardModel import PostCardListModel, PostCardModel
+from PostCardModel import PostCardListModel
 from RecipientModel import RecipientListModel
 from Utils import Utils
 from CredentialManager import CredentialManager
@@ -16,15 +16,12 @@ PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
 
 
 def registerQmlCustomTypes():
-    """Register the custom QML types for the app.
-
-    Unfortunately qmlRegisterUncreatableType is not yet supported in
-    PySide2, so we register all the types even though we do not want
-    to instantiate PostCardModel for instance.
-    """
+    """Register the custom QML types for the app."""
 
     QtQml.qmlRegisterType(PostCardListModel, "PostCard",
                           1, 0, "PostCardListModel")
+    QtQml.qmlRegisterType(RecipientListModel, "PostCard",
+                          1, 0, "RecipientListModel")
     QtQml.qmlRegisterType(Utils, "PostCard", 1, 0, "Utils")
     QtQml.qmlRegisterType(CredentialManager, "PostCard",
                           1, 0, "CredentialManager")
@@ -93,15 +90,16 @@ if __name__ == "__main__":
                 os.path.join(PROJECT_ROOT, "data/cards.csv"))
     # TODO remove these lines
     #postCardListModel.toCsvFile("../data/cards2.csv")
-    recipientModel = RecipientListModel.fromFile(
+    recipientListModel = RecipientListModel.fromFile(
                         os.path.join(PROJECT_ROOT, "data/recipients.csv"))
-    #recipientModel.toCsvFile("../data/recipients2.csv")
+    #recipientListModel.toCsvFile("../data/recipients2.csv")
 
     # TODO: handle credentials
     credentialManager = CredentialManager()
 
     # Set listviews data and load UI
     engine.rootContext().setContextProperty("postCardModel", postCardListModel)
+    engine.rootContext().setContextProperty("recipientModel", recipientListModel)
     engine.rootContext().setContextProperty("credentialManager", credentialManager)
     engine.load(os.path.join(PROJECT_ROOT, "ui/main.qml"))
 

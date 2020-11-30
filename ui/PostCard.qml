@@ -8,6 +8,7 @@ Item {
     id: container
 
     property PostCardListModel model
+    property RecipientListModel recipientListModel
     property StackView stackView
 
     width: ListView.view.width
@@ -21,6 +22,7 @@ Item {
 
         onClicked: stackView.push(Qt.createComponent("EditCardView.qml"), {
             model: model,
+            recipientListModel: recipientListModel,
             index: index,
             photo: photo,
             backText: backText,

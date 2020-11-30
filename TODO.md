@@ -2,11 +2,15 @@
 
 * Add license
 
-* Recipients
-  * Create page
-  * Assign to card
-
 * Send cards periodically
-* Create, Load and save database
 
-* Check validity of data in all input fields
+* Save changes to contact and card lists
+
+* Assign recipient to cards
+
+* Create list of cards already sent: simply a new model instance, and almost the same list view
+
+* Add drawer
+    * Login page
+    * Recipient list
+    * Cards sent

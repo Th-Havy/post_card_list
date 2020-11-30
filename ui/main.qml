@@ -30,9 +30,13 @@ ApplicationWindow {
                     stackView.pop()
                 }
                 else {
-                    stackView.push(Qt.createComponent("LoginView.qml"), {
+//                    stackView.push(Qt.createComponent("LoginView.qml"), {
+//                        stackView: stackView,
+//                        credentialManager: credentialManager
+//                    })
+                    stackView.push(Qt.createComponent("RecipientListView.qml"), {
                         stackView: stackView,
-                        credentialManager: credentialManager
+                        recipientModel: recipientModel
                     })
                 }
             }

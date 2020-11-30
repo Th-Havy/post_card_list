@@ -21,6 +21,7 @@ Item {
         anchors.topMargin: spacing
         delegate: PostCard {
             model: postCardModel
+            recipientListModel: recipientModel
             stackView: mainView.stackView
         }
     }

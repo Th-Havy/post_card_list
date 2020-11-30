@@ -9,6 +9,7 @@ Rectangle {
 
     property string title: qsTr("Edit card")
     property PostCardListModel model
+    property RecipientListModel recipientListModel
     property int index
     property string photo: ""
     property string backText: ""
@@ -82,7 +83,7 @@ Rectangle {
 
         Text {
             id: backTextEdit
-            text: '<b>Text:</b> ' + backText
+            text: '<b>Text</b>'
             padding: 10
         }
 
@@ -94,15 +95,17 @@ Rectangle {
         }
 
         Text {
-            id: contactEdit
-            text: '<b>Recipient:</b> ' + recipient
+            text: '<b>Recipient</b>'
             padding: 10
         }
 
-        TextField {
-            text: recipient
+        ComboBox {
+            id: recipientComboBox
             Layout.fillWidth: true
-            onEditingFinished: recipient = text
+            currentIndex: 0
+            model: recipientListModel
+            textRole: "displayName"
+            onActivated: recipient = currentText
         }
     }
 
