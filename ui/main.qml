@@ -53,9 +53,12 @@ ApplicationWindow {
                 width: parent.width
                 text: "Sent cards"
                 onClicked: {
-//                    stackView.push(Qt.createComponent("LoginView.qml"), {
-//                        stackView: stackView
-//                    })
+                    stackView.push(Qt.createComponent("PostCardListView.qml"), {
+                        title: qsTr("Sent cards"),
+                        model: sentCardsModel,
+                        stackView: stackView,
+                        editable:false
+                    })
                 }
             }
         }
@@ -88,20 +91,20 @@ ApplicationWindow {
     StackView {
         id: stackView
         anchors.fill: parent
-        initialItem: MainView {
+        initialItem: PostCardListView {
             id: mainView
             title: mainWindow.title
-            utils: utils
+            model: postCardModel
             stackView: stackView
         }
 
         Component.onCompleted: loginStateMachine.start()
     }
 
-    LoginStateMachine {
-        id: loginStateMachine
-        stackView: stackView
-        toolButton: toolButton
-    }
+//    LoginStateMachine {
+//        id: loginStateMachine
+//        stackView: stackView
+//        toolButton: toolButton
+//    }
 
 }

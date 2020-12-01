@@ -25,9 +25,15 @@ class Utils(QtCore.QObject):
         dropFilePrefix = "file:///"
 
         if url.lower().startswith(dropFilePrefix):
-            path = url.replace(dropFilePrefix, "", 1)
+            path = self.trimFileUrlPrefix(url)
 
-            if os.path.isfile(path):
-                return path.lower().endswith(Utils.IMAGE_EXTENSIONS)
+            return self.isValidImage(path)
 
         return False
+
+    @QtCore.Slot(str, result=str)
+    def trimFileUrlPrefix(self, url):
+        """Check if the provided url corresponds to a valid image."""
+        dropFilePrefix = "file:///"
+
+        return url.replace(dropFilePrefix, "", 1)

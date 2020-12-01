@@ -30,6 +30,7 @@ Rectangle {
             Layout.alignment: Qt.AlignCenter
             Layout.preferredWidth: parent.width * 0.75
             Layout.preferredHeight: Layout.preferredWidth * 0.75
+            Layout.maximumHeight: parent.height * 0.66
             source: photo
 
             Item {
@@ -80,27 +81,31 @@ Rectangle {
         }
 
         Text {
-            id: backTextEdit
-            text: '<b>Text</b>'
+            text: qsTr("Text")
             padding: 10
         }
 
-        TextField {
+        TextArea  {
+            id: backTextEdit
+
+            property int maximumLength: 700
+
             text: backText
+            onTextChanged: if (length > maximumLength) remove(maximumLength, length)
+            placeholderText: qsTr("Text on the back of the letter.")
             Layout.fillWidth: true
-            Layout.fillHeight: true
             onEditingFinished: backText = text
         }
 
         Text {
-            text: '<b>Recipient</b>'
+            text: qsTr("Recipient")
             padding: 10
         }
 
         ComboBox {
             id: recipientComboBox
             Layout.fillWidth: true
-            currentIndex: 0
+            currentIndex: recipientId
             model: recipientModel
             textRole: "displayName"
             onActivated: recipientId = currentIndex

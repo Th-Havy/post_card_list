@@ -9,6 +9,7 @@ Item {
     id: container
 
     property StackView stackView
+    property bool editableCard: true
 
     width: ListView.view.width
     height: 120
@@ -18,13 +19,20 @@ Item {
         anchors.fill: parent
         anchors.leftMargin: 10
         anchors.rightMargin: 10
+        enabled: editableCard
 
-        onClicked: stackView.push(Qt.createComponent("EditCardView.qml"), {
-            index: index,
-            photo: photo,
-            backText: backText,
-            recipientId: recipientId
-        })
+        onClicked: {
+            if (!editableCard) {
+                return
+            }
+
+            stackView.push(Qt.createComponent("EditCardView.qml"), {
+                index: index,
+                photo: photo,
+                backText: backText,
+                recipientId: recipientId
+            })
+        }
 
         RowLayout {
             anchors.fill: parent
@@ -67,6 +75,7 @@ Item {
 
         RoundButton {
             id: deleteButton
+            visible: editableCard
             width: parent.height * 0.5
             height: parent.height * 0.5
             anchors.horizontalCenter: parent.right

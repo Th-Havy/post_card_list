@@ -7,25 +7,28 @@ import QtQuick.Dialogs 1.0
 import PostCard 1.0
 
 Item {
-    id: mainView
+    id: view
 
-    property Utils utils: Utils {}
     property string title: ""
+    property PostCardListModel model
     property StackView stackView
+    property bool editable: true
 
     ListView {
         id: postCardListView
-        model: postCardModel
+        model: view.model
         anchors.fill: parent
         spacing: 10
         anchors.topMargin: spacing
         delegate: PostCard {
-            stackView: mainView.stackView
+            stackView: view.stackView
+            editableCard: editable
         }
     }
 
     RoundButton {
         id: newCardButton
+        visible: editable
         width: 80
         height: 80
         anchors.horizontalCenter: parent.right
@@ -39,6 +42,7 @@ Item {
 
     DropImageArea {
         id: dropImageArea
+        visible: editable
     }
 
     ImagePicker {

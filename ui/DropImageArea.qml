@@ -5,8 +5,6 @@ import PostCard 1.0
 
 DropArea {
 
-    // utils is a global context variable of type Utils
-
     anchors.fill: parent
     onEntered: {
         var validImage = false
@@ -19,9 +17,9 @@ DropArea {
         dropAreaHint.state = validImage ? "VALID_DRAG" : "INVALID_DRAG"
     }
     onDropped: {
-        for (var image of drop.urls) {
-            if (utils.isValidDroppedImage(image)) {
-                postCardModel.appendPostCard(image, "", 0)
+        for (var url of drop.urls) {
+            if (utils.isValidDroppedImage(url)) {
+                postCardModel.appendPostCard(url, "", 0)
             }
         }
         

@@ -4,6 +4,8 @@ from PySide2 import QtCore
 from PySide2.QtCore import Qt
 import pandas as pd
 
+from Utils import Utils
+
 
 class PostCardModel():
     """Class representing a postcard."""
@@ -145,9 +147,12 @@ class PostCardListModel(QtCore.QAbstractListModel):
         """Call this function when a recipient is deleted, to set the
         recipient of its cards back to the default recipient (myself)."""
         for i in range(self.rowCount()):
+            qModelIndex = self.index(i, 0)
             if self.postCardList[i].recipientId == recipientId:
-                qModelIndex = self.index(i, 0)
                 self.setData(qModelIndex, 0, self.RECIPIENT_ID_ROLE)
+            elif self.postCardList[i].recipientId > recipientId:
+                self.setData(qModelIndex, self.postCardList[i].recipientId - 1,
+                             self.RECIPIENT_ID_ROLE)
 
     def toCsvFile(self, filepath):
         """Save the card list to a csv File."""
@@ -163,8 +168,11 @@ class PostCardListModel(QtCore.QAbstractListModel):
         assert df.shape[1] == len(cls.MODEL_FIELDS) + 1, \
                "Wrong number of columns in cards data."
 
+        utils = Utils()
+
         # Remove cards if specified image does not exist
-        valid_cards = df["photo"].apply(lambda p: os.path.isfile(p))
+        valid_cards = df["photo"].apply(
+            lambda p: os.path.isfile(utils.trimFileUrlPrefix(p)))
         df = df[valid_cards]
 
         # TODO: Remove cards if recipient does not exist

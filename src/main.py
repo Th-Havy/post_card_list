@@ -5,9 +5,11 @@ import random
 from threading import Thread
 
 from PySide2 import QtGui, QtQml, QtWidgets
+from PySide2.QtCore import Qt
 
 from PostCardModel import PostCardListModel
 from RecipientModel import RecipientListModel
+from Database import Database
 from Utils import Utils
 from CredentialManager import CredentialManager
 from PostCardSender import PostCardSender
@@ -28,7 +30,7 @@ def registerQmlCustomTypes():
                           1, 0, "CredentialManager")
 
 
-def sendCards(checkStop, tray, postCardListModel, postCardSender):
+def sendCards(checkStop, tray, postCardListModel, sentCardsListModel, postCardSender):
     """Send periodically a card.
 
     Keyword arguments:
@@ -71,7 +73,7 @@ def sendCards(checkStop, tray, postCardListModel, postCardSender):
         # Send notification that card was sent
         notifTitle = "PostCardList"
         notifMessage = app.tr("A new postcard was sent.")
-        tray.showMessage(notifTitle , notifMessage, msecs=1000)
+        tray.showMessage(notifTitle, notifMessage, msecs=1000)
 
         # Wait 24h + some random time before sending a new card
         lastSendingTime = time.time()
@@ -81,11 +83,17 @@ def sendCards(checkStop, tray, postCardListModel, postCardSender):
 if __name__ == "__main__":
 
     # Create qml application
-    app = QtWidgets.QApplication(sys.argv)
+    QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    QtWidgets.QApplication.setOrganizationName("Th-Havy")
+    QtWidgets.QApplication.setOrganizationDomain("blablabla.com")
+
+    # Non-existent in PySide2: QQuickStyle.setStyle("material")
+    sys_argv = sys.argv
+    sys_argv += ['--style', 'material']
+
+    app = QtWidgets.QApplication(sys_argv)
     appIcon = QtGui.QIcon(os.path.join(PROJECT_ROOT, "resources/app_icon.png"))
     app.setWindowIcon(appIcon)
-    app.setOrganizationName("Th-Havy")
-    app.setOrganizationDomain("blablabla.com")
     engine = QtQml.QQmlApplicationEngine()
     registerQmlCustomTypes()
 
@@ -102,28 +110,24 @@ if __name__ == "__main__":
     tray.show()
 
     # Create/load database
-    postCardListModel = PostCardListModel.fromFile(
-                os.path.join(PROJECT_ROOT, "data/cards.csv"))
-    # TODO remove these lines
-    #postCardListModel.toCsvFile("../data/cards2.csv")
-    recipientListModel = RecipientListModel.fromFile(
-                        os.path.join(PROJECT_ROOT, "data/recipients.csv"))
-    #recipientListModel.toCsvFile("../data/recipients2.csv")
+    database = Database(PROJECT_ROOT, "data")
 
     # TODO: handle credentials
     credentialManager = CredentialManager()
     postCardSender = PostCardSender(credentialManager)
 
     # Set listviews data and load UI
-    engine.rootContext().setContextProperty("postCardModel", postCardListModel)
-    engine.rootContext().setContextProperty("recipientModel", recipientListModel)
+    engine.rootContext().setContextProperty("postCardModel", database.getPostCardListModel())
+    engine.rootContext().setContextProperty("sentCardsModel", database.getSentCardsListModel())
+    engine.rootContext().setContextProperty("recipientModel", database.getRecipientListModel())
     engine.rootContext().setContextProperty("credentialManager", credentialManager)
     engine.load(os.path.join(PROJECT_ROOT, "ui/main.qml"))
 
     # Start threads
     stopAllThreads = False
     cardSendingThread = Thread(target=sendCards, args=[
-        lambda : stopAllThreads, tray, postCardListModel, postCardSender])
+        lambda : stopAllThreads, tray, database.getPostCardListModel(),
+                 database.getSentCardsListModel(), postCardSender])
     cardSendingThread.start()
 
     # Run Qt App
@@ -134,3 +138,6 @@ if __name__ == "__main__":
     # Stop the running threads
     stopAllThreads = True
     cardSendingThread.join()
+
+    # Save the changes to the database
+    database.saveDatabase()
