@@ -1,3 +1,3 @@
 {
-    "files": ["resources/app_icon.png","src/RecipientModel.py","src/PostCardModel.py","src/CredentialManager.py","ui/RecipientListView.qml","ui/EditCardView.qml","README.md","ui/MainView.qml","resources/recipient_icon.png","src/main.py","src/Utils.py","ui/PostCard.qml","TODO.md","ui/Recipient.qml","ui/ImagePicker.qml","ui/DropImageArea.qml","ui/main.qml","ui/LoginView.qml","ui/EditRecipient.qml"]
+    "files": ["resources/app_icon.png","src/main.py","ui/EditRecipient.qml","README.md","src/PostCardModel.py","ui/RecipientListView.qml","ui/ImagePicker.qml","ui/Recipient.qml","ui/LoginView.qml","TODO.md","src/RecipientModel.py","ui/DropImageArea.qml","resources/recipient_icon.png","ui/PostCard.qml","ui/MainView.qml","ui/EditCardView.qml","src/Utils.py","ui/main.qml","src/CredentialManager.py","src/PostCardSender.py"]
 }

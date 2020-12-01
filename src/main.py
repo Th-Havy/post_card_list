@@ -10,6 +10,7 @@ from PostCardModel import PostCardListModel
 from RecipientModel import RecipientListModel
 from Utils import Utils
 from CredentialManager import CredentialManager
+from PostCardSender import PostCardSender
 
 # Global variable for conveniences
 PROJECT_ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -27,14 +28,16 @@ def registerQmlCustomTypes():
                           1, 0, "CredentialManager")
 
 
-def sendCards(checkStop, tray, postCardListModel):
+def sendCards(checkStop, tray, postCardListModel, postCardSender):
     """Send periodically a card.
 
     Keyword arguments:
     checkStop -- method for requesting the thread to stop
     tray -- Application tray (QSystemTrayIcon) for sending notifications
+    postCardSender -- PostCardSender, for sending cards
     """
 
+    threadSleepDuration = 5.0
     lastSendingTime = time.time()
     waitingInterval = 5.0
 
@@ -42,22 +45,35 @@ def sendCards(checkStop, tray, postCardListModel):
         if checkStop():
             break
 
-        # Sleep while no card cand be sent
-        if time.time() - lastSendingTime < waitingInterval:
-            time.sleep(1.0)
+        if not postCardSender.credentialManager.isLogged():
+            time.sleep(threadSleepDuration)
             continue
 
-        # TODO: check if waitingInterval needs to be adjusted
+        # Sleep while no card cand be sent
+        if time.time() - lastSendingTime < waitingInterval:
+            time.sleep(threadSleepDuration)
+            continue
+
+        # Check if waitingInterval needs to be adjusted
+        remainingTime = postCardSender.getRemainingTimeForNextCard()
+        if remainingTime < 0:
+            # Not logged in
+            continue
+        elif remainingTime > 0:
+            waitingInterval += remainingTime + threadSleepDuration
+            continue
 
         # TODO: send card
 
         # Remove top-most card from list
         postCardListModel.requestRemovePostCard.emit(0)
 
+        # Send notification that card was sent
         notifTitle = "PostCardList"
         notifMessage = app.tr("A new postcard was sent.")
         tray.showMessage(notifTitle , notifMessage, msecs=1000)
 
+        # Wait 24h + some random time before sending a new card
         lastSendingTime = time.time()
         waitingInterval = 24 * 60 * 60 + random.uniform(10.0, 7 * 60 * 60)
 
@@ -96,6 +112,7 @@ if __name__ == "__main__":
 
     # TODO: handle credentials
     credentialManager = CredentialManager()
+    postCardSender = PostCardSender(credentialManager)
 
     # Set listviews data and load UI
     engine.rootContext().setContextProperty("postCardModel", postCardListModel)
@@ -106,7 +123,7 @@ if __name__ == "__main__":
     # Start threads
     stopAllThreads = False
     cardSendingThread = Thread(target=sendCards, args=[
-        lambda : stopAllThreads, tray, postCardListModel])
+        lambda : stopAllThreads, tray, postCardListModel, postCardSender])
     cardSendingThread.start()
 
     # Run Qt App

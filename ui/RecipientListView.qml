@@ -10,7 +10,6 @@ Item {
     id: recipientView
 
     property string title: qsTr("Recipient list")
-    property RecipientListModel recipientModel
     property StackView stackView
 
     ListView {
@@ -20,7 +19,6 @@ Item {
         spacing: 10
         anchors.topMargin: spacing
         delegate: Recipient {
-            model: recipientModel
             stackView: recipientView.stackView
         }
     }
@@ -38,7 +36,7 @@ Item {
         onClicked: {
             recipientModel.appendRecipient("", "", "", "", "")
             stackView.push(Qt.createComponent("EditRecipient.qml"), {
-                model: recipientModel,
+                title: qsTr("New recipient"),
                 index: (recipientModel.rowCount() - 1),
                 firstName: "firstName",
                 lastName: "lastName",

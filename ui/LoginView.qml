@@ -9,7 +9,6 @@ Rectangle {
 
     property string title: qsTr("Login")
     property StackView stackView
-    property CredentialManager credentialManager
 
     ColumnLayout {
         anchors.fill: parent

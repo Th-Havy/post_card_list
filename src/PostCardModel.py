@@ -140,6 +140,15 @@ class PostCardListModel(QtCore.QAbstractListModel):
         self.postCardList.append(card)
         self.endInsertRows()
 
+    @QtCore.Slot(int)
+    def notifyRecipientWasRemoved(self, recipientId):
+        """Call this function when a recipient is deleted, to set the
+        recipient of its cards back to the default recipient (myself)."""
+        for i in range(self.rowCount()):
+            if self.postCardList[i].recipientId == recipientId:
+                qModelIndex = self.index(i, 0)
+                self.setData(qModelIndex, 0, self.RECIPIENT_ID_ROLE)
+
     def toCsvFile(self, filepath):
         """Save the card list to a csv File."""
         df = pd.DataFrame([p.toList() for p in self.postCardList],

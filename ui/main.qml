@@ -17,6 +17,54 @@ ApplicationWindow {
         id: utils
     }
 
+    Drawer {
+        id: drawer
+        width: 0.66 * mainWindow.width
+        height: mainWindow.height
+        interactive: stackView.depth == 1
+
+        onInteractiveChanged: {
+            drawer.close()
+        }
+
+        Column {
+            anchors.fill: parent
+
+            Button {
+                id: loginButton
+                width: parent.width
+                text: "Log in"
+                onClicked: {
+                    stackView.push(Qt.createComponent("LoginView.qml"), {
+                        stackView: stackView
+                    })
+                }
+            }
+
+            Button {
+                id: recipientListButton
+                width: parent.width
+                text: "Recipients"
+                onClicked: {
+                    stackView.push(Qt.createComponent("RecipientListView.qml"), {
+                        stackView: stackView
+                    })
+                }
+            }
+
+            Button {
+                id: sentCardListButton
+                width: parent.width
+                text: "Sent cards"
+                onClicked: {
+//                    stackView.push(Qt.createComponent("LoginView.qml"), {
+//                        stackView: stackView
+//                    })
+                }
+            }
+        }
+    }
+
     header: ToolBar {
         id: toolBar
         contentHeight: toolButton.implicitHeight
@@ -30,14 +78,7 @@ ApplicationWindow {
                     stackView.pop()
                 }
                 else {
-//                    stackView.push(Qt.createComponent("LoginView.qml"), {
-//                        stackView: stackView,
-//                        credentialManager: credentialManager
-//                    })
-                    stackView.push(Qt.createComponent("RecipientListView.qml"), {
-                        stackView: stackView,
-                        recipientModel: recipientModel
-                    })
+                    drawer.open()
                 }
             }
         }

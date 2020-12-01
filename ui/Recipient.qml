@@ -7,7 +7,6 @@ import PostCard 1.0
 Item {
     id: container
 
-    property RecipientListModel model
     property StackView stackView
 
     width: ListView.view.width
@@ -20,7 +19,6 @@ Item {
         anchors.rightMargin: 10
 
         onClicked: stackView.push(Qt.createComponent("EditRecipient.qml"), {
-            model: model,
             index: index,
             firstName: firstName,
             lastName: lastName,
@@ -44,13 +42,15 @@ Item {
             anchors.right: parent.right
 
             Text {
-                text: firstName + " " + lastName
+                text: displayName
                 Layout.alignment: Qt.AlignCenter
             }
         }
 
         RoundButton {
             id: deleteButton
+            // Hide button for recipient 0 (myself)
+            visible: index != 0
             width: parent.height * 0.5
             height: parent.height * 0.5
             anchors.horizontalCenter: parent.right
@@ -58,7 +58,10 @@ Item {
             anchors.horizontalCenterOffset: -width
             text: "<b>x<b>"
             font.pointSize: 10
-            onClicked: model.removeRecipient(index)
+            onClicked: {
+                postCardModel.notifyRecipientWasRemoved(index)
+                recipientModel.removeRecipient(index)
+            }
         }
     }
 }

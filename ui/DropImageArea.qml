@@ -5,7 +5,7 @@ import PostCard 1.0
 
 DropArea {
 
-    property Utils utils: Utils {}
+    // utils is a global context variable of type Utils
 
     anchors.fill: parent
     onEntered: {

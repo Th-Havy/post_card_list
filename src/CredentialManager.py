@@ -15,7 +15,7 @@ class CredentialManager(QtCore.QObject):
 
     @QtCore.Slot(str, str, result=bool)
     def setCredentials(self, username, password):
-        """Set the credentials, and check if they are valid"""
+        """Set the credentials, and check if they are valid."""
         token = postcard_creator.Token()
 
         if token.has_valid_credentials(username, password,
@@ -33,7 +33,7 @@ class CredentialManager(QtCore.QObject):
     @QtCore.Slot(result=bool)
     def isLogged(self):
         """Return True if valid credentials are set."""
-        self.__isLogged
+        return self.__isLogged
 
     def getToken(self):
         """Return the token necessary to order cards.

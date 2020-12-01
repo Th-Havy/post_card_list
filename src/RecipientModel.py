@@ -84,7 +84,10 @@ class RecipientListModel(QtCore.QAbstractListModel):
             elif role == self.ZIP_CODE_ROLE:
                 return element.zipCode
             elif role == self.DISPLAY_NAME_ROLE:
-                return element.firstName + " " + element.lastName
+                if index.row() == 0:
+                    return "Myself"
+                else:
+                    return element.firstName + " " + element.lastName
 
         return None
 
@@ -111,7 +114,7 @@ class RecipientListModel(QtCore.QAbstractListModel):
                 return False
 
             self.recipientList[index.row()] = element
-            self.dataChanged.emit(index, index, [role])
+            self.dataChanged.emit(index, index, [role, "self.DISPLAY_NAME_ROLE"])
 
             return True
         else:

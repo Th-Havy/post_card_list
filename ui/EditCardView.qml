@@ -8,19 +8,17 @@ import PostCard 1.0
 Rectangle {
 
     property string title: qsTr("Edit card")
-    property PostCardListModel model
-    property RecipientListModel recipientListModel
     property int index
     property string photo: ""
     property string backText: ""
     property int recipientId: 0
 
-    property var __qModelIndex: model.index(index, 0)
+    property var __qModelIndex: postCardModel.index(index, 0)
 
     Component.onDestruction: {
-        model.setData(__qModelIndex, photo, model.photoRole())
-        model.setData(__qModelIndex, backText, model.backTextRole())
-        model.setData(__qModelIndex, recipientId, model.recipientIdRole())
+        postCardModel.setData(__qModelIndex, photo, postCardModel.photoRole())
+        postCardModel.setData(__qModelIndex, backText, postCardModel.backTextRole())
+        postCardModel.setData(__qModelIndex, recipientId, postCardModel.recipientIdRole())
     }
 
     ColumnLayout {
@@ -103,7 +101,7 @@ Rectangle {
             id: recipientComboBox
             Layout.fillWidth: true
             currentIndex: 0
-            model: recipientListModel
+            model: recipientModel
             textRole: "displayName"
             onActivated: recipientId = currentIndex
         }
