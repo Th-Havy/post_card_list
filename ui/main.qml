@@ -98,7 +98,22 @@ ApplicationWindow {
             utils: utils
             stackView: stackView
         }
-    }
 
+        // Create the default recipient (sender) if none exists
+        Component.onCompleted: {
+            if (recipientModel.rowCount() == 0) {
+                recipientModel.appendRecipient("", "", "", "", "")
+                stackView.push(Qt.createComponent("EditRecipient.qml"), {
+                    title: qsTr("Your coordinates"),
+                    index: (recipientModel.rowCount() - 1),
+                    firstName: "firstName",
+                    lastName: "lastName",
+                    address: "address",
+                    city: "city",
+                    zipCode: 9999
+                })
+            }
+        }
+    }
 
 }

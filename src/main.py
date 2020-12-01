@@ -37,7 +37,7 @@ def sendCards(checkStop, tray, postCardListModel, postCardSender):
     postCardSender -- PostCardSender, for sending cards
     """
 
-    threadSleepDuration = 5.0
+    threadSleepDuration = 2.5
     lastSendingTime = time.time()
     waitingInterval = 5.0
 
