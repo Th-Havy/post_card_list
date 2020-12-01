@@ -34,11 +34,7 @@ ApplicationWindow {
                 id: loginButton
                 width: parent.width
                 text: "Log in"
-                onClicked: {
-                    stackView.push(Qt.createComponent("LoginView.qml"), {
-                        stackView: stackView
-                    })
-                }
+                onClicked: loginStateMachine.start()
             }
 
             Button {
@@ -99,21 +95,13 @@ ApplicationWindow {
             stackView: stackView
         }
 
-        // Create the default recipient (sender) if none exists
-        Component.onCompleted: {
-            if (recipientModel.rowCount() == 0) {
-                recipientModel.appendRecipient("", "", "", "", "")
-                stackView.push(Qt.createComponent("EditRecipient.qml"), {
-                    title: qsTr("Your coordinates"),
-                    index: (recipientModel.rowCount() - 1),
-                    firstName: "firstName",
-                    lastName: "lastName",
-                    address: "address",
-                    city: "city",
-                    zipCode: 9999
-                })
-            }
-        }
+        Component.onCompleted: loginStateMachine.start()
+    }
+
+    LoginStateMachine {
+        id: loginStateMachine
+        stackView: stackView
+        toolButton: toolButton
     }
 
 }

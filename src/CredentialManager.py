@@ -5,6 +5,8 @@ from postcard_creator import postcard_creator
 class CredentialManager(QtCore.QObject):
     """Class storing the credential for postcard_creator."""
 
+    loggedIn = QtCore.Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -23,6 +25,7 @@ class CredentialManager(QtCore.QObject):
             self.username = username
             self.password = password
             self.__isLogged = True
+            self.loggedIn.emit()
             return True
         else:
             self.username = ""

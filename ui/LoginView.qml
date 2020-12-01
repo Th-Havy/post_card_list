@@ -9,6 +9,7 @@ Rectangle {
 
     property string title: qsTr("Login")
     property StackView stackView
+    property bool closeOnLogin: true
 
     ColumnLayout {
         anchors.fill: parent
@@ -44,7 +45,9 @@ Rectangle {
             onClicked: {
                 if (credentialManager.setCredentials(usernameField.text, passwordField.text)) {
                     console.log("Valid credentials")
-                    stackView.pop()
+                    if (closeOnLogin) {
+                        stackView.pop()
+                    }
                 }
                 else {
                     console.log("Invalid credentials.")
