@@ -72,7 +72,9 @@ def sendCards(checkStop, tray, postCardListModel, recipientListModel, postCardSe
             card = postCardListModel.postCardList[0]
             sender = recipientListModel.recipientList[0]
             recipient = recipientListModel.recipientList[card.recipientId]
-            postCardSender.sendPostCard(card, sender, recipient)
+            if not postCardSender.sendPostCard(card, sender, recipient):
+                time.sleep(threadSleepDuration)
+                continue
 
             # Remove top-most card from list
             postCardListModel.requestMoveToSentPostCard.emit(0)

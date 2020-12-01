@@ -3,6 +3,8 @@ from PySide2 import QtCore
 
 from postcard_creator import postcard_creator
 
+from Utils import Utils
+
 class PostCardSender(QtCore.QObject):
     """Class to send cards."""
 
@@ -27,13 +29,16 @@ class PostCardSender(QtCore.QObject):
 
         if self.creator is not None:
 
-            if self.creator.get_quota()['available']:
-                return 0.0
-            else:
-                dateTimeNext = datetime.fromisoformat(self.creator.get_quota()['next'])
-                dateTimeNow = datetime.now(dateTimeNext.tzinfo)
+            try:
+                if self.creator.get_quota()['available']:
+                    return 0.0
+                else:
+                    dateTimeNext = datetime.fromisoformat(self.creator.get_quota()['next'])
+                    dateTimeNow = datetime.now(dateTimeNext.tzinfo)
 
-                return float((dateTimeNext - dateTimeNow).seconds)
+                    return float((dateTimeNext - dateTimeNow).seconds)
+            except:
+                return -1.0
         else:
             return -1.0
 
@@ -49,9 +54,9 @@ class PostCardSender(QtCore.QObject):
             return False
 
         cardToSend = postcard_creator.Postcard(
-            message=postCard.backMessage,
+            message=postCard.backText,
             recipient=recipient.toPostCardCreatorRecipient(),
-            sender=sender.toPostCardCreatorRecipient(),
+            sender=sender.toPostCardCreatorSender(),
             picture_stream=open(Utils().trimFileUrlPrefix(postCard.photo), 'rb'))
 
         try:

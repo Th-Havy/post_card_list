@@ -1,3 +1,5 @@
+import time
+
 from PySide2 import QtCore
 
 from postcard_creator import postcard_creator
@@ -20,17 +22,20 @@ class CredentialManager(QtCore.QObject):
         """Set the credentials, and check if they are valid."""
         token = postcard_creator.Token()
 
-        if token.has_valid_credentials(username, password,
-                                       self.authentication_method):
-            self.username = username
-            self.password = password
-            self.__isLogged = True
-            self.loggedIn.emit()
-            return True
-        else:
-            self.username = ""
-            self.password = ""
-            self.__isLogged = False
+        try:
+            if token.has_valid_credentials(username, password,
+                                           self.authentication_method):
+                self.username = username
+                self.password = password
+                self.__isLogged = True
+                self.loggedIn.emit()
+                return True
+            else:
+                self.username = ""
+                self.password = ""
+                self.__isLogged = False
+                return False
+        except:
             return False
 
     @QtCore.Slot(result=bool)
@@ -47,6 +52,17 @@ class CredentialManager(QtCore.QObject):
             return None
 
         token = postcard_creator.Token()
-        token.fetch_token(self.username, self.password,
-                          self.authentication_method)
-        return token
+
+        trials = 5
+
+        while trials > 0:
+            trials -= 1
+            try:
+                token.fetch_token(self.username, self.password,
+                                  self.authentication_method)
+                return token
+            except:
+                time.sleep(3.0)
+
+        return None
+

@@ -23,8 +23,21 @@ class RecipientModel():
 
     def toPostCardCreatorRecipient(self):
         """Return the recipient as a postcard_creator Recipient object."""
-        return postcard_creator.Recipient(prename=self.firstName, lastname=self.lastName,
-                            street=self.address, place=self.city, zip_code=self.zipcode)
+        return postcard_creator.Recipient(
+            prename=self.firstName,
+            lastname=self.lastName,
+            street=self.address,
+            place=self.city,
+            zip_code=self.zipCode)
+
+    def toPostCardCreatorSender(self):
+        """Return the recipient as a postcard_creator Sender object."""
+        return postcard_creator.Sender(
+            prename=self.firstName,
+            lastname=self.lastName,
+            street=self.address,
+            place=self.city,
+            zip_code=self.zipCode)
 
 
 class RecipientListModel(QtCore.QAbstractListModel):
