@@ -101,10 +101,10 @@ ApplicationWindow {
         Component.onCompleted: loginStateMachine.start()
     }
 
-//    LoginStateMachine {
-//        id: loginStateMachine
-//        stackView: stackView
-//        toolButton: toolButton
-//    }
+    LoginStateMachine {
+        id: loginStateMachine
+        stackView: stackView
+        toolButton: toolButton
+    }
 
 }

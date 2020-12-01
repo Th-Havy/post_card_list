@@ -30,12 +30,14 @@ def registerQmlCustomTypes():
                           1, 0, "CredentialManager")
 
 
-def sendCards(checkStop, tray, postCardListModel, sentCardsListModel, postCardSender):
+def sendCards(checkStop, tray, postCardListModel, recipientListModel, postCardSender):
     """Send periodically a card.
 
     Keyword arguments:
     checkStop -- method for requesting the thread to stop
     tray -- Application tray (QSystemTrayIcon) for sending notifications
+    postCardListModel -- List of cards
+    recipientListModel -- List of recipients
     postCardSender -- PostCardSender, for sending cards
     """
 
@@ -65,19 +67,24 @@ def sendCards(checkStop, tray, postCardListModel, sentCardsListModel, postCardSe
             waitingInterval += remainingTime + threadSleepDuration
             continue
 
-        # TODO: send card
+        if postCardListModel.rowCount() > 0:
+            # Send card
+            card = postCardListModel.postCardList[0]
+            sender = recipientListModel.recipientList[0]
+            recipient = recipientListModel.recipientList[card.recipientId]
+            postCardSender.sendPostCard(card, sender, recipient)
 
-        # Remove top-most card from list
-        postCardListModel.requestRemovePostCard.emit(0)
+            # Remove top-most card from list
+            postCardListModel.requestMoveToSentPostCard.emit(0)
 
-        # Send notification that card was sent
-        notifTitle = "PostCardList"
-        notifMessage = app.tr("A new postcard was sent.")
-        tray.showMessage(notifTitle, notifMessage, msecs=1000)
+            # Send notification that card was sent
+            notifTitle = "PostCardList"
+            notifMessage = app.tr("A new postcard was sent.")
+            tray.showMessage(notifTitle, notifMessage, msecs=1000)
 
-        # Wait 24h + some random time before sending a new card
-        lastSendingTime = time.time()
-        waitingInterval = 24 * 60 * 60 + random.uniform(10.0, 7 * 60 * 60)
+            # Wait 24h + some random time before sending a new card
+            lastSendingTime = time.time()
+            waitingInterval = 24 * 60 * 60 + random.uniform(10.0, 7 * 60 * 60)
 
 
 if __name__ == "__main__":
@@ -127,7 +134,7 @@ if __name__ == "__main__":
     stopAllThreads = False
     cardSendingThread = Thread(target=sendCards, args=[
         lambda : stopAllThreads, tray, database.getPostCardListModel(),
-                 database.getSentCardsListModel(), postCardSender])
+                 database.getRecipientListModel(), postCardSender])
     cardSendingThread.start()
 
     # Run Qt App

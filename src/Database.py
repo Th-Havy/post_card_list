@@ -41,6 +41,8 @@ class Database:
             self.sentCardsListModel = PostCardListModel()
             self.sentCardsListModel.toCsvFile(self.sentCardsPath)
 
+        self.postCardListModel.setSentCardsListModel(self.sentCardsListModel)
+
     def getPostCardListModel(self):
         """Get the list of postcards."""
         return self.postCardListModel

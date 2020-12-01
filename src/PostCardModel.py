@@ -35,14 +35,17 @@ class PostCardListModel(QtCore.QAbstractListModel):
     }
 
     # Modification of the list can only be done in the GUI thread,
-    # hence a signal mirrors the removePostCard() method
+    # hence signals mirror some methods that are called in other threads
     requestRemovePostCard = QtCore.Signal(int)
+    requestMoveToSentPostCard = QtCore.Signal(int)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.postCardList = []
+        self.sentCardsListModel = None
 
         self.requestRemovePostCard.connect(self.removePostCard)
+        self.requestMoveToSentPostCard.connect(self.moveToSentPostCard)
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         """Return the number of elements in the list."""
@@ -131,6 +134,17 @@ class PostCardListModel(QtCore.QAbstractListModel):
         """Remove a postcard from the list."""
         self.removeRows(index, 1)
 
+    @QtCore.Slot(int)
+    def moveToSentPostCard(self, index):
+        """Move a postcard from the list to the sent list."""
+
+        if self.sentCardsListModel is not None:
+            card = self.postCardList[index]
+            self.sentCardsListModel.appendPostCard(
+                card.photo, card.backText, card.recipientId)
+
+        self.removePostCard(index)
+
     @QtCore.Slot(str, str, int)
     def appendPostCard(self, photo, backText, recipientId):
         """Append a postcard to the list."""
@@ -154,6 +168,10 @@ class PostCardListModel(QtCore.QAbstractListModel):
                 self.setData(qModelIndex, self.postCardList[i].recipientId - 1,
                              self.RECIPIENT_ID_ROLE)
 
+    def setSentCardsListModel(self, model):
+        """Set the model to which the sent cards will be added."""
+        self.sentCardsListModel = model
+
     def toCsvFile(self, filepath):
         """Save the card list to a csv File."""
         df = pd.DataFrame([p.toList() for p in self.postCardList],
@@ -168,11 +186,9 @@ class PostCardListModel(QtCore.QAbstractListModel):
         assert df.shape[1] == len(cls.MODEL_FIELDS) + 1, \
                "Wrong number of columns in cards data."
 
-        utils = Utils()
-
         # Remove cards if specified image does not exist
         valid_cards = df["photo"].apply(
-            lambda p: os.path.isfile(utils.trimFileUrlPrefix(p)))
+            lambda p: os.path.isfile(Utils().trimFileUrlPrefix(p)))
         df = df[valid_cards]
 
         # TODO: Remove cards if recipient does not exist
