@@ -23,14 +23,17 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 30
+        anchors.margins: 10
+        spacing: 10
 
         Image {
             id: photoEdit
             Layout.alignment: Qt.AlignCenter
+            Layout.fillWidth: true
             Layout.preferredWidth: parent.width * 0.75
-            Layout.preferredHeight: Layout.preferredWidth * 0.75
-            Layout.maximumHeight: parent.height * 0.66
+            Layout.maximumHeight: parent.height * 0.5
+            asynchronous: true
+            fillMode: Image.PreserveAspectFit
             source: photo
 
             Item {
@@ -80,35 +83,40 @@ Rectangle {
             ]
         }
 
-        Text {
-            text: qsTr("Text")
-            padding: 10
-        }
-
-        TextArea  {
-            id: backTextEdit
-
-            property int maximumLength: 700
-
-            text: backText
-            onTextChanged: if (length > maximumLength) remove(maximumLength, length)
-            placeholderText: qsTr("Text on the back of the letter.")
+        ScrollView {
             Layout.fillWidth: true
-            onEditingFinished: backText = text
+            Layout.fillHeight: true
+
+            TextArea  {
+                id: backTextEdit
+
+                property int maximumLength: 700
+
+                text: backText
+                onTextChanged: if (length > maximumLength) remove(maximumLength, length)
+                placeholderText: qsTr("Text on the back of the letter.")
+                onEditingFinished: backText = text
+                selectByMouse: true
+                wrapMode: TextEdit.Wrap
+            }
         }
 
-        Text {
-            text: qsTr("Recipient")
-            padding: 10
-        }
+        RowLayout {
+            Layout.alignment: Qt.AlignBottom
+            spacing: 10
 
-        ComboBox {
-            id: recipientComboBox
-            Layout.fillWidth: true
-            currentIndex: recipientId
-            model: recipientModel
-            textRole: "displayName"
-            onActivated: recipientId = currentIndex
+            Text {
+                text: qsTr("Recipient")
+            }
+
+            ComboBox {
+                id: recipientComboBox
+                Layout.fillWidth: true
+                currentIndex: recipientId
+                model: recipientModel
+                textRole: "displayName"
+                onActivated: recipientId = currentIndex
+            }
         }
     }
 
