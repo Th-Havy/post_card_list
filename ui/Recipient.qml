@@ -55,7 +55,7 @@ Item {
             height: parent.height * 0.5
             anchors.horizontalCenter: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenterOffset: -width
+            anchors.horizontalCenterOffset: -width * 0.75
             text: "<b>x<b>"
             font.pointSize: 10
             onClicked: {

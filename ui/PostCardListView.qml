@@ -33,8 +33,8 @@ Item {
         height: 80
         anchors.horizontalCenter: parent.right
         anchors.verticalCenter: parent.bottom
-        anchors.horizontalCenterOffset: -width
-        anchors.verticalCenterOffset: -height
+        anchors.horizontalCenterOffset: -width * 0.75
+        anchors.verticalCenterOffset: -height * 0.75
         text: "<b>+<b>"
         font.pointSize: 18
         onClicked: imagePicker.setVisible(true)

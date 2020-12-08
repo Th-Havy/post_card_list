@@ -13,34 +13,28 @@ Rectangle {
 
     ColumnLayout {
         anchors.fill: parent
-        spacing: 30
-
-        Text {
-            text: qsTr("Username")
-            padding: 10
-        }
+        anchors.margins: 10
+        spacing: 10
 
         TextField {
             id: usernameField
-            text: ""
             Layout.fillWidth: true
-        }
-
-        Text {
-            text: qsTr("Password")
-            padding: 10
+            text: ""
+            placeholderText: qsTr("Username")
         }
 
         TextField {
             id: passwordField
-            text: ""
             Layout.fillWidth: true
+            text: ""
+            placeholderText: qsTr("Password")
             echoMode: TextField.Password
         }
 
         Button {
             id: loginButton
-            Layout.alignment: Qt.AlignCenter
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignBottom
             text: qsTr("Login")
             onClicked: {
                 if (credentialManager.setCredentials(usernameField.text, passwordField.text)) {

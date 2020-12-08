@@ -36,54 +36,65 @@ Item {
 
         RowLayout {
             anchors.fill: parent
+            anchors.margins: 10
+            spacing: 10
 
             Image {
                 id: photoPreview
                 Layout.fillHeight: true
                 Layout.preferredWidth: container.height
-                Layout.margins: 10
                 source: photo
                 sourceSize.width: 512
                 sourceSize.height: 512
+                asynchronous: true
+                fillMode: Image.PreserveAspectFit
             }
 
-            Text {
-                text: '<b>Text:</b> ' + backText
-            }
+            ColumnLayout {
 
-            Text {
-                id: recipientNameText
-                property string recipientName: "Unknown"
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-                function fetchRecipientName() {
-                    var qModelIndex = recipientModel.index(recipientId, 0)
-                    recipientName = recipientModel.data(qModelIndex, recipientModel.displayNameRole())
+                Text {
+                    text: backText
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    wrapMode: Text.Wrap
+                    elide: Text.ElideRight
                 }
 
-                Component.onCompleted: fetchRecipientName()
+                Text {
+                    id: recipientNameText
+                    property string recipientName: "Unknown"
 
-                text: recipientName
+                    function fetchRecipientName() {
+                        var qModelIndex = recipientModel.index(recipientId, 0)
+                        recipientName = recipientModel.data(qModelIndex, recipientModel.displayNameRole())
+                    }
 
-                Connections {
-                    target: postCardModel
-                    onDataChanged: {
-                        recipientNameText.fetchRecipientName()
+                    Component.onCompleted: fetchRecipientName()
+
+                    text: recipientName
+                    font.bold: true
+
+                    Connections {
+                        target: postCardModel
+                        onDataChanged: {
+                            recipientNameText.fetchRecipientName()
+                        }
                     }
                 }
             }
-        }
 
-        RoundButton {
-            id: deleteButton
-            visible: editableCard
-            width: parent.height * 0.5
-            height: parent.height * 0.5
-            anchors.horizontalCenter: parent.right
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenterOffset: -width
-            text: "<b>x<b>"
-            font.pointSize: 10
-            onClicked: postCardModel.removePostCard(index)
+            RoundButton {
+                id: deleteButton
+                visible: editableCard
+                Layout.preferredWidth: container.height * 0.5
+                Layout.preferredHeight: Layout.preferredWidth
+                text: "<b>x<b>"
+                font.pointSize: 10
+                onClicked: postCardModel.removePostCard(index)
+            }
         }
     }
 }
