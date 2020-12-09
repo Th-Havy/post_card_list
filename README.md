@@ -6,7 +6,7 @@ This app uses [postcard_creator](https://github.com/abertschi/postcard_creator_w
 a Python wrapper around the API of the Swiss Post service, to order the postcards automatically
 everyday.
 
-![app screenshot](readme_images/app.png)
+![app demo](readme_images/app.gif)
 
 ## Installation
 
