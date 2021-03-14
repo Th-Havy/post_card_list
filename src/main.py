@@ -4,7 +4,7 @@ import time
 import random
 from threading import Thread
 
-from PySide2 import QtGui, QtQml, QtWidgets
+from PySide2 import QtGui, QtQml, QtWidgets, QtCore
 from PySide2.QtCore import Qt
 
 from PostCardModel import PostCardListModel
@@ -88,6 +88,9 @@ def sendCards(checkStop, tray, postCardListModel, recipientListModel, postCardSe
             lastSendingTime = time.time()
             waitingInterval = 24 * 60 * 60 + random.uniform(10.0, 7 * 60 * 60)
 
+@QtCore.Slot()
+def setAppVisible():
+    engine.rootContext().setContextProperty("appVisibility", True)
 
 if __name__ == "__main__":
 
@@ -106,11 +109,16 @@ if __name__ == "__main__":
     engine = QtQml.QQmlApplicationEngine()
     registerQmlCustomTypes()
 
+    # Keep application running in the background when window is closed
+    # It can be stopped from the system tray
+    QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
+
     # Tray menu
     menu = QtWidgets.QMenu()
-    settingAction = menu.addAction("setting")
-    exitAction = menu.addAction("exit")
-    exitAction.triggered.connect(app.quit)
+    openAction = menu.addAction("Open app")
+    openAction.triggered.connect(setAppVisible)
+    quitAction = menu.addAction("Quit")
+    quitAction.triggered.connect(app.quit)
 
     tray = QtWidgets.QSystemTrayIcon()
     tray.setIcon(appIcon)
@@ -121,11 +129,12 @@ if __name__ == "__main__":
     # Create/load database
     database = Database(PROJECT_ROOT, "data")
 
-    # TODO: handle credentials
+    # Handle credentials
     credentialManager = CredentialManager()
     postCardSender = PostCardSender(credentialManager)
 
     # Set listviews data and load UI
+    engine.rootContext().setContextProperty("appVisibility", True)
     engine.rootContext().setContextProperty("postCardModel", database.getPostCardListModel())
     engine.rootContext().setContextProperty("sentCardsModel", database.getSentCardsListModel())
     engine.rootContext().setContextProperty("recipientModel", database.getRecipientListModel())

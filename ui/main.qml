@@ -10,11 +10,17 @@ ApplicationWindow {
 
     width: 480
     height: 720
-    visible: true
+    visible: appVisibility
     title: qsTr("PostCardList")
 
     Utils {
         id: utils
+    }
+
+    onClosing: {
+        close.accepted = false
+        appVisibility = false
+        hide()
     }
 
     Drawer {
