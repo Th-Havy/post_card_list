@@ -5,3 +5,5 @@
 * Refactor main.py
     * Put card sender thread elsewhere
     * Create tray in separate function
+* Prevent window from freezing when clicking sign in button
+* Allow reordering of cards

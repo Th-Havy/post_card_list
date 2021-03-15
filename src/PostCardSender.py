@@ -30,6 +30,7 @@ class PostCardSender(QtCore.QObject):
         if self.creator is not None:
 
             try:
+                self.updateCreator()
                 if self.creator.get_quota()['available']:
                     return 0.0
                 else:
@@ -38,6 +39,7 @@ class PostCardSender(QtCore.QObject):
 
                     return float((dateTimeNext - dateTimeNow).seconds)
             except:
+                print("Error while getting remaining time until next card.")
                 return -1.0
         else:
             return -1.0
@@ -62,6 +64,7 @@ class PostCardSender(QtCore.QObject):
         try:
             self.creator.send_free_card(postcard=cardToSend, mock_send=False)
         except postcard_creator.PostcardCreatorException:
+            print("Error while sending card.")
             return False
 
         return True
